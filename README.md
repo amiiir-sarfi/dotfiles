@@ -3,8 +3,8 @@ My minimal zsh setup.
 1. **Clone and Run:**
 
    ```bash
-   git clone https://github.com/amiiir-sarfi/dotfiles
-   cd https://github.com/amiiir-sarfi/dotfiles
+   git clone https://github.com/amiiir-sarfi/dotfiles tempdotfiles
+   cd tempdotfiles
    chmod +x setup.sh
    ./setup.sh [--miniconda] [--cuda]
    ```
