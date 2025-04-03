@@ -1,11 +1,11 @@
 # Path to your oh-my-zsh installation.
-export ZSH="/home/nader/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="nader"
+ZSH_THEME="simple"
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
@@ -35,20 +35,6 @@ else
   export EDITOR='nvim'
 fi
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-
-######################
-# Exports
-######################
-# CUDA                                                                                                            
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64
-export PATH=$PATH:/usr/local/cuda/bin
-
-# GEM
-export GEM_HOME="$(ruby -e 'puts Gem.user_dir')"
-export PATH="$PATH:$GEM_HOME/bin"
 
 ######################
 # Alias
@@ -58,5 +44,7 @@ export PATH="$PATH:$GEM_HOME/bin"
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 
-alias anaconda='source  /home/nader/.conda.zshrc'
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
+######################
+# Exports
+######################
