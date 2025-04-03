@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# Check if we need to use sudo:
+if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo"
+else
+    SUDO=""
+fi
+
 # Parse command-line options
 INSTALL_MINICONDA=false
 EXPORT_CUDA=false
@@ -15,8 +22,8 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # 1. Update apt-get and install required packages
-sudo apt-get update
-sudo apt-get install -y zsh curl git
+$SUDO apt-get update
+$SUDO apt-get install -y zsh curl git
 
 # 2. Install Oh-My-Zsh (non-interactive)
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -30,6 +37,8 @@ chsh -s "$(command -v zsh)"
 # 4. Copy your custom theme from the repo to Oh-My-Zsh's custom themes directory
 mkdir -p "$HOME/.oh-my-zsh/custom/themes"
 cp .oh-my-zsh/custom/themes/simple.zsh-theme "$HOME/.oh-my-zsh/custom/themes/"
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # 5. Copy your .zshrc from the repo to the home directory
 cp .zshrc "$HOME/.zshrc"
