@@ -9,13 +9,11 @@ else
 fi
 
 # Parse command-line options
-INSTALL_MINICONDA=false
 EXPORT_CUDA=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --miniconda) INSTALL_MINICONDA=true ;;
-        --cuda) EXPORT_CUDA=true ;;
         *) echo "Unknown option: $1" && exit 1 ;;
     esac
     shift
@@ -31,27 +29,36 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-# 3. Set Zsh as the default shell
-chsh -s "$(command -v zsh)"
+# 3. Set Zsh as the default shell for the target user
+$SUDO chsh -s "$(command -v zsh)" "$USER"
 
 # 4. Copy your custom theme from the repo to Oh-My-Zsh's custom themes directory
 mkdir -p "$HOME/.oh-my-zsh/custom/themes"
-cp .oh-my-zsh/custom/themes/simple.zsh-theme "$HOME/.oh-my-zsh/custom/themes/"
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-# 5. Copy your .zshrc from the repo to the home directory
-cp .zshrc "$HOME/.zshrc"
-
-# 6. Optionally install Miniconda
-if [ "$INSTALL_MINICONDA" = true ]; then
-    MINICONDA_INSTALLER="Miniconda3-latest-Linux-x86_64.sh"
-    curl -O "https://repo.anaconda.com/miniconda/$MINICONDA_INSTALLER"
-    bash "$MINICONDA_INSTALLER" -b -p "$HOME/.anaconda"
-    rm "$MINICONDA_INSTALLER"
+if [ -f ".oh-my-zsh/custom/themes/simple.zsh-theme" ]; then
+    cp .oh-my-zsh/custom/themes/simple.zsh-theme "$HOME/.oh-my-zsh/custom/themes/"
+else
+    echo "Warning: simple.zsh-theme not found in .oh-my-zsh/custom/themes/"
 fi
 
-# 7. Optionally detect the latest CUDA version and export its path
+# 5. Install plugins if they are not already installed
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+fi
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
+
+# 6. Backup any existing .zshrc and copy your .zshrc from the repo to the home directory
+if [ -f "$HOME/.zshrc" ]; then
+    cp "$HOME/.zshrc" "$HOME/.zshrc.backup"
+    echo "Existing .zshrc backed up to .zshrc.backup"
+fi
+cp .zshrc "$HOME/.zshrc"
+
+# 7. Optionally detect the latest CUDA version and export its path in .zshrc
 if [ "$EXPORT_CUDA" = true ]; then
     CUDA_PATH=""
     if [ -L "/usr/local/cuda" ]; then
