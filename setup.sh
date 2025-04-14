@@ -13,7 +13,7 @@ EXPORT_CUDA=false
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --miniconda) INSTALL_MINICONDA=true ;;
+        --cuda) EXPORT_CUDA=true ;;
         *) echo "Unknown option: $1" && exit 1 ;;
     esac
     shift
