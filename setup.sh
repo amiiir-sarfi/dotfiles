@@ -8,17 +8,6 @@ else
     SUDO=""
 fi
 
-# Parse command-line options
-EXPORT_CUDA=false
-
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --cuda) EXPORT_CUDA=true ;;
-        *) echo "Unknown option: $1" && exit 1 ;;
-    esac
-    shift
-done
-
 # 1. Update apt-get and install required packages
 $SUDO apt-get update
 $SUDO apt-get install -y zsh curl git
@@ -57,27 +46,5 @@ if [ -f "$HOME/.zshrc" ]; then
     echo "Existing .zshrc backed up to .zshrc.backup"
 fi
 cp .zshrc "$HOME/.zshrc"
-
-# 7. Optionally detect the latest CUDA version and export its path in .zshrc
-if [ "$EXPORT_CUDA" = true ]; then
-    CUDA_PATH=""
-    if [ -L "/usr/local/cuda" ]; then
-        CUDA_PATH="/usr/local/cuda"
-    elif compgen -G "/usr/local/cuda-*" > /dev/null; then
-        CUDA_PATH=$(ls -d /usr/local/cuda-* | sort -V | tail -n 1)
-    fi
-
-    if [ -n "$CUDA_PATH" ]; then
-        {
-            echo ""
-            echo "# Added by setup.sh: CUDA support"
-            echo "export CUDA_PATH=\"$CUDA_PATH\""
-            echo "export PATH=\"\$CUDA_PATH/bin:\$PATH\""
-        } >> "$HOME/.zshrc"
-        echo "CUDA detected and configured: $CUDA_PATH"
-    else
-        echo "CUDA option selected, but no CUDA installation was detected."
-    fi
-fi
 
 echo "Setup complete. Please restart your terminal."
